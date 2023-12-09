@@ -1,9 +1,11 @@
 from datetime import timedelta
-from typing import Final
+from typing import Final, TypeAlias
 
 from aiohttp import ClientTimeout
 from livekit.api import AccessToken, LiveKitAPI, VideoGrants  # type: ignore
 from livekit.api.access_token import DEFAULT_TTL  # type: ignore
+
+Grants: TypeAlias = VideoGrants
 
 DEFAULT_TIMEOUT: Final[ClientTimeout] = ClientTimeout(total=60)
 
@@ -29,7 +31,7 @@ class LiveKit(LiveKitAPI):  # type: ignore
 
     def create_access_token(
         self,
-        grants: VideoGrants | None = None,
+        grants: Grants | None = None,
         name: str = "",
         metadata: str = "",
         sha256: str = "",
