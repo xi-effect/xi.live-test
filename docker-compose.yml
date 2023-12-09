@@ -1,0 +1,16 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: xieffect/xieffect:live-test
+    command:
+      - "--reload"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/backend/app
+    env_file:
+      - .env
+    environment:
+      WATCHFILES_FORCE_POLLING: true
