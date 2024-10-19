@@ -1,16 +1,11 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from app.common.authorization import UserID, proxy_auth_dependency
+from app.common.authorization import ProxyUserID, ProxyUsername
 from app.common.config import LIVEKIT_URL, livekit
 from app.common.livekitter import Grants
 
 router = APIRouter(tags=["tokens"])
-
-
-class TokenInput(BaseModel):
-    username: str = "name"
-    room_name: str
 
 
 class TokenResponse(BaseModel):
@@ -21,14 +16,18 @@ class TokenResponse(BaseModel):
 DEMO_BASE_URL = "https://meet.livekit.io/custom"
 
 
-@router.post("/", dependencies=[proxy_auth_dependency])
-def create_token(user_id: UserID, token_input: TokenInput) -> TokenResponse:
+@router.post("/")
+def create_token(
+    user_id: ProxyUserID,
+    username: ProxyUsername,
+    room_name: str = "room",
+) -> TokenResponse:
     token_jwt = livekit.create_access_token(
         identity=user_id,
-        name=token_input.username,
+        name=username,
         grants=Grants(
             room_join=True,
-            room=token_input.room_name,
+            room=room_name,
         ),
     ).to_jwt()
     return TokenResponse(
